@@ -30,7 +30,9 @@
 
         for (i = 0, l = urls.length; i < l; i++) {
             doXHR(urls[i], function (data) {
-                console.log(data)
+                if(data){
+                    findAttrs(data);
+                }
             });
         }
     }
@@ -75,6 +77,20 @@
         };
     }
 
+    function findAttrs(data){
+        var pattern = new RegExp("[^{};\\s].*?(?=;)","igm"),
+            result;
+
+        data = data.replace(pattern,function(word){
+            result = word.split(":");
+            if(!CSS.supports(result[0],result[1])){
+                return "current_attr: " + result[1];
+            }else{
+                return word;
+            }
+        });
+        console.log(data);
+    }
 
     getPrefixFile();
 });
