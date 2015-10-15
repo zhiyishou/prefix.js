@@ -78,7 +78,7 @@
     }
 
     function findAttrs(data){
-        var pattern = new RegExp("[^{};\\s].*?(?=;)","igm"),
+        var pattern = new RegExp("[^{};\\s].*?(?=;)","g"),
             result;
 
         data = data.replace(pattern,function(word){
