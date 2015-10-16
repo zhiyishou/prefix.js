@@ -8,6 +8,19 @@
         factory();
     }
 }(function () {
+    var toolDiv = document.createElement("div"),
+        CURRENT_PREFIX = function(){
+            if(navigator.userAgent.indexOf("MSIE") >= 0){
+                return "-ms-";
+            }else if(navigator.userAgent.indexOf("Firefox") >= 0){
+                return "-moz-";
+            }else if(navigator.userAgent.indexOf("Opera") >= 0){
+                return "-o-";
+            }else if(navigator.userAgent.indexOf("Mozilla") >= 0){
+                return "-webkit-";
+            }
+        }();
+
     function getPrefixURL() {
         var links = document.getElementsByTagName("link"),
             prefixLinks = [],
@@ -78,18 +91,44 @@
     }
 
     function findAttrs(data){
-        var pattern = new RegExp("[^{};\\s].*?(?=;)","g"),
+        var blockPattern = new RegExp("{(.*?)}","g"),
+            pattern = new RegExp("([^;]*?):(.*?)(;|$)","g"),
+            temp = {},
             result;
 
-        data = data.replace(pattern,function(word){
-            result = word.split(":");
-            if(!CSS.supports(result[0],result[1])){
-                return "current_attr: " + result[1];
-            }else{
-                return word;
-            }
-        });
+        data = data
+            .replace(/\s|\/\*.*\*\//g,"")
+            .replace(blockPattern,function(all,block){
+                block = block.replace(pattern,function(all,prop,value){
+                    if(!isCSSSupport(prop,value)){
+                        return "";
+                    }else{
+                        return prop + ":" + value + ";";
+                    }
+                });
+                return "{" + block + "}";
+            });
         console.log(data);
+    }
+
+    function isCSSSupport(prop, value){
+        var support;
+
+        value = typeof value === "undefined" ? "inherit" : value;
+
+        if("CSS" in window && "supports" in window.CSS){
+            return window.CSS.supports(prop, value);
+        }
+
+        if("supportsCSS" in window){
+            return window.supportsCSS(prop, value);
+        }
+
+        support = prop in toolDiv.style;
+
+        toolDiv.style.cssText = prop + ":" + value;
+
+        return support && toolDiv.style[prop] !== "";
     }
 
     getPrefixFile();
