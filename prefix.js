@@ -36,17 +36,29 @@
         return prefixLinks;
     }
 
-    function getPrefixFile() {
+    function getPrefixFile(callback) {
         var urls = getPrefixURL(),
+            files = [],
             i,
             l;
 
         for (i = 0, l = urls.length; i < l; i++) {
-            doXHR(urls[i], function (data) {
-                if(data){
-                    findAttrs(data);
-                }
-            });
+            (function(index) {
+                doXHR(urls[i], function (data) {
+                    if (data) {
+                        data = doPrefix(data);
+                        files.push(data);
+
+                        checkAllDone();
+                    }
+                });
+            })(i)
+        }
+
+        function checkAllDone(){
+            if(files.length === urls.length){
+                callback(files);
+            }
         }
     }
 
@@ -90,7 +102,7 @@
         };
     }
 
-    function findAttrs(data){
+    function doPrefix(data){
         var blockPattern = new RegExp("{(.*?)}","g"),
             pattern = new RegExp("([^;]*?):(.*?)(;|$)","g"),
             temp = {},
@@ -108,7 +120,8 @@
                 });
                 return "{" + block + "}";
             });
-        console.log(data);
+
+        return data;
     }
 
     function isCSSSupport(prop, value){
@@ -131,5 +144,7 @@
         return support && toolDiv.style[prop] !== "";
     }
 
-    getPrefixFile();
+    getPrefixFile(function(files){
+        console.log(files)
+    });
 });
