@@ -3,6 +3,7 @@
 !/css
 /css/*
 !/css/index.css
+!/css/a.css
 
 !prefix.js
 !test.html
