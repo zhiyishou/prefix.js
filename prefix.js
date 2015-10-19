@@ -21,7 +21,7 @@
             }
         }();
 
-    function getPrefixURL() {
+    function getPrefixLinks() {
         var links = document.getElementsByTagName("link"),
             prefixLinks = [],
             i,
@@ -29,35 +29,43 @@
 
         for (i = 0, l = links.length; i < l; i++) {
             if (links[i].getAttribute("rel") === "stylesheet/prefix") {
-                prefixLinks.push(links[i].href);
+                prefixLinks.push(links[i]);
             }
         }
 
         return prefixLinks;
     }
 
-    function getPrefixFile(callback) {
-        var urls = getPrefixURL(),
-            files = [],
+    function getPrefixPair(callback) {
+        var result = {key: getPrefixLinks(), value: []},
             i,
             l;
 
-        for (i = 0, l = urls.length; i < l; i++) {
+        for (i = 0, l = result.key.length; i < l; i++) {
             (function (index) {
-                doXHR(urls[i], function (data) {
+                doXHR(result.key[index].href, function (data) {
                     if (data) {
-                        data = doPrefix(data);
-                        files.push(data);
+                        result.value[index] = doPrefix(data);
 
-                        checkAllDone();
+                        checkAllDone(result);
                     }
                 });
             })(i)
         }
 
-        function checkAllDone() {
-            if (files.length === urls.length) {
-                callback(files);
+        function checkAllDone(result) {
+            var len = 0,
+                i = 0,
+                l = result.key.length;
+
+            for(; i < l; i++){
+                if(typeof result.value[i] !== "undefined"){
+                    len++;
+                }
+            }
+
+            if(len == l){
+                callback(result);
             }
         }
     }
@@ -144,11 +152,12 @@
         return support && toolDiv.style[prop] !== "";
     }
 
-    function insertIntoDOM(files) {
+    function insertIntoDOM(pair) {
         var i, l, style,
             box = document.createElement("div");
 
-        for (i = 0, l = files.length; i < l; i++) {
+        //todo change the function to replacement
+        for (i = 0, l = pair.key.length; i < l; i++) {
             style = document.createElement("style");
 
             style.innerHTML = files[i];
@@ -159,8 +168,7 @@
         document.body.appendChild(box);
     }
 
-    getPrefixFile(function (files) {
-        //console.log(files)
-        insertIntoDOM(files)
+    getPrefixPair(function (pair) {
+        insertIntoDOM(pair);
     });
 });
