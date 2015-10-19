@@ -9,14 +9,14 @@
     }
 }(function () {
     var toolDiv = document.createElement("div"),
-        CURRENT_PREFIX = function(){
-            if(navigator.userAgent.indexOf("MSIE") >= 0){
+        CURRENT_PREFIX = function () {
+            if (navigator.userAgent.indexOf("MSIE") >= 0) {
                 return "-ms-";
-            }else if(navigator.userAgent.indexOf("Firefox") >= 0){
+            } else if (navigator.userAgent.indexOf("Firefox") >= 0) {
                 return "-moz-";
-            }else if(navigator.userAgent.indexOf("Opera") >= 0){
+            } else if (navigator.userAgent.indexOf("Opera") >= 0) {
                 return "-o-";
-            }else if(navigator.userAgent.indexOf("Mozilla") >= 0){
+            } else if (navigator.userAgent.indexOf("Mozilla") >= 0) {
                 return "-webkit-";
             }
         }();
@@ -43,7 +43,7 @@
             l;
 
         for (i = 0, l = urls.length; i < l; i++) {
-            (function(index) {
+            (function (index) {
                 doXHR(urls[i], function (data) {
                     if (data) {
                         data = doPrefix(data);
@@ -55,8 +55,8 @@
             })(i)
         }
 
-        function checkAllDone(){
-            if(files.length === urls.length){
+        function checkAllDone() {
+            if (files.length === urls.length) {
                 callback(files);
             }
         }
@@ -102,19 +102,19 @@
         };
     }
 
-    function doPrefix(data){
-        var blockPattern = new RegExp("{(.*?)}","g"),
-            pattern = new RegExp("([^;]*?):(.*?)(;|$)","g"),
+    function doPrefix(data) {
+        var blockPattern = new RegExp("{(.*?)}", "g"),
+            pattern = new RegExp("([^;]*?):(.*?)(;|$)", "g"),
             temp = {},
             result;
 
         data = data
-            .replace(/\s|\/\*.*\*\//g,"")
-            .replace(blockPattern,function(all,block){
-                block = block.replace(pattern,function(all,prop,value){
-                    if(!isCSSSupport(prop,value)){
+            .replace(/\s|\/\*.*\*\//g, "")
+            .replace(blockPattern, function (all, block) {
+                block = block.replace(pattern, function (all, prop, value) {
+                    if (!isCSSSupport(prop, value)) {
                         return "";
-                    }else{
+                    } else {
                         return prop + ":" + value + ";";
                     }
                 });
@@ -124,16 +124,16 @@
         return data;
     }
 
-    function isCSSSupport(prop, value){
+    function isCSSSupport(prop, value) {
         var support;
 
         value = typeof value === "undefined" ? "inherit" : value;
 
-        if("CSS" in window && "supports" in window.CSS){
+        if ("CSS" in window && "supports" in window.CSS) {
             return window.CSS.supports(prop, value);
         }
 
-        if("supportsCSS" in window){
+        if ("supportsCSS" in window) {
             return window.supportsCSS(prop, value);
         }
 
@@ -144,7 +144,23 @@
         return support && toolDiv.style[prop] !== "";
     }
 
-    getPrefixFile(function(files){
-        console.log(files)
+    function insertIntoDOM(files) {
+        var i, l, style,
+            box = document.createElement("div");
+
+        for (i = 0, l = files.length; i < l; i++) {
+            style = document.createElement("style");
+
+            style.innerHTML = files[i];
+            box.appendChild(style);
+        }
+
+        box.id = "prefixStyleBox";
+        document.body.appendChild(box);
+    }
+
+    getPrefixFile(function (files) {
+        //console.log(files)
+        insertIntoDOM(files)
     });
 });
