@@ -58,13 +58,13 @@
                 i = 0,
                 l = result.key.length;
 
-            for(; i < l; i++){
-                if(typeof result.value[i] !== "undefined"){
+            for (; i < l; i++) {
+                if (typeof result.value[i] !== "undefined") {
                     len++;
                 }
             }
 
-            if(len == l){
+            if (len == l) {
                 callback(result);
             }
         }
@@ -153,19 +153,16 @@
     }
 
     function insertIntoDOM(pair) {
-        var i, l, style,
-            box = document.createElement("div");
+        var i, l, style, link;
 
-        //todo change the function to replacement
         for (i = 0, l = pair.key.length; i < l; i++) {
+            link = pair.key[i];
             style = document.createElement("style");
+            style.innerHTML = pair.value[i];
+            style.setAttribute("href", link.href);
 
-            style.innerHTML = files[i];
-            box.appendChild(style);
+            link.parentNode.replaceChild(style, link);
         }
-
-        box.id = "prefixStyleBox";
-        document.body.appendChild(box);
     }
 
     getPrefixPair(function (pair) {
