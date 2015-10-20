@@ -152,7 +152,7 @@
         return support && toolDiv.style[prop] !== "";
     }
 
-    function insertIntoDOM(pair) {
+    function replaceLinks(pair) {
         var i, l, style, link;
 
         for (i = 0, l = pair.key.length; i < l; i++) {
@@ -166,6 +166,6 @@
     }
 
     getPrefixPair(function (pair) {
-        insertIntoDOM(pair);
+        replaceLinks(pair);
     });
 });
