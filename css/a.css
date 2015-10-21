@@ -1,3 +1,7 @@
 body{
     background: red;
 }
+@keyframes jump{
+    from {background:red}
+    to {background:yellow}
+}
