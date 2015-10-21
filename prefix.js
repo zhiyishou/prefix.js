@@ -9,6 +9,7 @@
     }
 }(function () {
     var toolDiv = document.createElement("div"),
+        prefixTool = {},
         CURRENT_PREFIX = function () {
             if (navigator.userAgent.indexOf("MSIE") >= 0) {
                 return "-ms-";
@@ -20,6 +21,46 @@
                 return "-webkit-";
             }
         }();
+
+
+    prefixTool = {
+        /**
+         * prefix a block after selector
+         * @param data
+         */
+        prefixBlock: function prefixBlock(data) {
+            return data.replace(/{(.*?)}/g, function (all, block) {
+                return "{" + prefixTool.prefixProp(block) + "}";
+            });
+        },
+        /**
+         * prefix selector when it begin with "@" character
+         * @param data
+         */
+        prefixSelector: function prefixSelector(data) {
+            return data.replace(/(@.*?keyframes)|\((.*?)\)/, function (all, keyframes, brackets) {
+                if (keyframes) {
+                    return "@" + CURRENT_PREFIX + keyframes;
+                } else {//do prefix for content in brackets
+                    return "(" + prefixTool.prefixProp(brackets) + ")";
+                }
+            });
+        },
+        /**
+         * prefix each prop for content in a block
+         * @param data
+         * @param notAddSem
+         */
+        prefixProp: function prefixProp(data, notAddSem) {
+            return data.replace(/([^;]*?):(.*?)(;|$)/g, function (all, prop, value) {
+                if (!isCSSSupport(prop, value)) {
+                    return "";
+                } else {
+                    return prop + ":" + value + ( notAddSem ? "" : ";" );
+                }
+            })
+        }
+    };
 
     function getPrefixLinks() {
         var links = document.getElementsByTagName("link"),
@@ -111,22 +152,16 @@
     }
 
     function doPrefix(data) {
-        var blockPattern = new RegExp("{(.*?)}", "g"),
-            pattern = new RegExp("([^;]*?):(.*?)(;|$)", "g"),
-            temp = {},
-            result;
-
         data = data
-            .replace(/\s|\/\*.*\*\//g, "")
-            .replace(blockPattern, function (all, block) {
-                block = block.replace(pattern, function (all, prop, value) {
-                    if (!isCSSSupport(prop, value)) {
-                        return "";
-                    } else {
-                        return prop + ":" + value + ";";
-                    }
-                });
-                return "{" + block + "}";
+            .replace(/\s*\/\*.*\*\/\s*/g, "")  //clear comments
+            .replace(/\s*([\{\}\:\;\,])\s*/g, "$1") //clear spaces
+            .replace(/\s+/g, " ") //combine spaces
+            .replace(/(@.*?)({(.+?{.*?})+?})|{(.*?)}/g, function (all, selector, contentWithQuote, content, singleContent) {//do prefix
+                if (singleContent) {//when match the pattern after "|"
+                    return "{" + prefixTool.prefixProp(singleContent) + "}";
+                } else {//when match the pattern before "|"
+                    return prefixTool.prefixSelector(selector) + "{" + prefixTool.prefixBlock(content) + "}";
+                }
             });
 
         return data;
