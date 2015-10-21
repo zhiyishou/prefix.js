@@ -1,7 +1,26 @@
 body{
     background: red;
 }
+body:hover{
+    animation: jump;
+    transition-duration: 1s;
+}
 @keyframes jump{
     from {background:red}
     to {background:yellow}
+}
+/*@-webkit-keyframes upArrow{*/
+
+
+/*}*/
+body{
+    color:green;
+}
+@media screen and       (max-width: 1000px){
+    body{
+        background:blue;
+    }
+}
+body{
+    color:red;
 }
