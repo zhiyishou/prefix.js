@@ -53,11 +53,28 @@
          * @param notAddSem
          */
         prefixProp: function prefixProp(data, notAddSem) {
+            var currentProps = {};
+
             return data.replace(/([^;]*?):(.*?)(;|$)/g, function (all, prop, value) {
-                if (!isCSSSupport(prop, value)) {
+                var needPrefix = false;
+
+                prop = prop.replace(/^(-webkit-|-moz-|-ms-|-o-)?(.*?)$/,function(all, prefix, pureProp){
+                    if(!isCSSSupport(pureProp,value)){
+                        if(isCSSSupport(CURRENT_PREFIX + pureProp, value)){
+                            needPrefix = true;
+                        }else{
+                            pureProp = "";
+                        }
+                    }
+
+                    return pureProp;
+                });
+
+                if(prop && !(prop in currentProps)){
+                    currentProps[prop] = true;
+                    return (needPrefix ? CURRENT_PREFIX : "") + prop + ":" + value + ( notAddSem ? "" : ";");
+                }else{
                     return "";
-                } else {
-                    return prop + ":" + value + ( notAddSem ? "" : ";" );
                 }
             })
         }
