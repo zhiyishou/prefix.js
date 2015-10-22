@@ -29,6 +29,7 @@
          * @param data
          */
         prefixBlock: function prefixBlock(data) {
+            console.log(data)
             return data.replace(/{(.*?)}/g, function (all, block) {
                 return "{" + prefixTool.prefixProp(block) + "}";
             });
@@ -40,7 +41,7 @@
         prefixSelector: function prefixSelector(data) {
             return data.replace(/(@.*?keyframes)|\((.*?)\)/, function (all, keyframes, brackets) {
                 if (keyframes) {
-                    return "@" + CURRENT_PREFIX + keyframes;
+                    return "@" + CURRENT_PREFIX + "keyframes";
                 } else {//do prefix for content in brackets
                     return "(" + prefixTool.prefixProp(brackets) + ")";
                 }
@@ -156,7 +157,7 @@
             .replace(/\s*\/\*.*\*\/\s*/g, "")  //clear comments
             .replace(/\s*([\{\}\:\;\,])\s*/g, "$1") //clear spaces
             .replace(/\s+/g, " ") //combine spaces
-            .replace(/(@.*?)({(.+?{.*?})+?})|{(.*?)}/g, function (all, selector, contentWithQuote, content, singleContent) {//do prefix
+            .replace(/(@.*?)({((.+?{.*?})+?)})|{(.*?)}/g, function (all, selector, contentWithQuote, content, contentLastMatch, singleContent) {//do prefix
                 if (singleContent) {//when match the pattern after "|"
                     return "{" + prefixTool.prefixProp(singleContent) + "}";
                 } else {//when match the pattern before "|"
