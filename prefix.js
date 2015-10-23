@@ -9,7 +9,8 @@
     }
 }(function () {
     var toolDiv = document.createElement("div"),
-        prefixTool = {},
+        regexpTool = {},
+        options = {},
         CURRENT_PREFIX = function () {
             if (navigator.userAgent.indexOf("MSIE") >= 0) {
                 return "-ms-";
@@ -23,15 +24,14 @@
         }();
 
 
-    prefixTool = {
+    regexpTool = {
         /**
          * prefix a block after selector
          * @param data
          */
         prefixBlock: function prefixBlock(data) {
-            console.log(data)
             return data.replace(/{(.*?)}/g, function (all, block) {
-                return "{" + prefixTool.prefixProp(block) + "}";
+                return "{" + regexpTool.prefixProp(block) + "}";
             });
         },
         /**
@@ -43,7 +43,7 @@
                 if (keyframes) {
                     return "@" + CURRENT_PREFIX + "keyframes";
                 } else {//do prefix for content in brackets
-                    return "(" + prefixTool.prefixProp(brackets) + ")";
+                    return "(" + regexpTool.prefixProp(brackets) + ")";
                 }
             });
         },
@@ -77,6 +77,16 @@
                     return "";
                 }
             })
+        },
+        formatBlock: function (data) {
+            return data.replace(/;}|{|;/g, function (all) {
+                switch (all.length) {
+                    case 2:
+                        return all.charAt(0) + "\n" + all.charAt(1) + "\n\n";
+                    case 1:
+                        return all + "\n\t";
+                }
+            });
         }
     };
 
@@ -175,12 +185,23 @@
             .replace(/\s*([\{\}\:\;\,])\s*/g, "$1") //clear spaces
             .replace(/\s+/g, " ") //combine spaces
             .replace(/(@.*?)({((.+?{.*?})+?)})|{(.*?)}/g, function (all, selector, contentWithQuote, content, contentLastMatch, singleContent) {//do prefix
-                if (singleContent) {//when match the pattern after "|"
-                    return "{" + prefixTool.prefixProp(singleContent) + "}";
+                if (singleContent) {//when match the pattern after "|" (start with @)
+                    return "{" + regexpTool.prefixProp(singleContent) + "}";
                 } else {//when match the pattern before "|"
-                    return prefixTool.prefixSelector(selector) + "{" + prefixTool.prefixBlock(content) + "}";
+                    return regexpTool.prefixSelector(selector) + "{" + regexpTool.prefixBlock(content) + "}";
                 }
             });
+
+        if(options.format){
+            data = data.replace(/{[^{}]*?}/g,function(all){
+                //format for {content} formation
+                return regexpTool.formatBlock(all);
+            }).replace(/{(.*?{(.|\n)*?}\n+)}/g,function(all, content){
+                //format for {{content}} formation
+                return  "{\n\n\t" + content.replace(/(\n(?=[^$]))/g,"$1\t") + "}\n\n";
+            })
+
+        }
 
         return data;
     }
@@ -218,7 +239,22 @@
         }
     }
 
+    function getCurrentScript(){
+        return document.currentScript || (function(){
+            var scripts = document.getElementsByName("script");
+            return scripts[scripts.length - 1];
+        })();
+    }
+
+    function init(){
+        var script = getCurrentScript();
+
+        options.format = script.getAttribute("format")
+    }
+
+    init();
     getPrefixPair(function (pair) {
         replaceLinks(pair);
     });
+
 });
