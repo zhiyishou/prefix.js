@@ -58,11 +58,11 @@
             return data.replace(/([^;]*?):(.*?)(;|$)/g, function (all, prop, value) {
                 var needPrefix = false;
 
-                prop = prop.replace(/^(-webkit-|-moz-|-ms-|-o-)?(.*?)$/,function(all, prefix, pureProp){
-                    if(!isCSSSupport(pureProp,value)){
-                        if(isCSSSupport(CURRENT_PREFIX + pureProp, value)){
+                prop = prop.replace(/^(-webkit-|-moz-|-ms-|-o-)?(.*?)$/, function (all, prefix, pureProp) {
+                    if (!isCSSSupport(pureProp, value)) {
+                        if (isCSSSupport(CURRENT_PREFIX + pureProp, value)) {
                             needPrefix = true;
-                        }else{
+                        } else {
                             pureProp = "";
                         }
                     }
@@ -70,10 +70,10 @@
                     return pureProp;
                 });
 
-                if(prop && !(prop in currentProps)){
+                if (prop && !(prop in currentProps)) {
                     currentProps[prop] = true;
                     return (needPrefix ? CURRENT_PREFIX : "") + prop + ":" + value + ( notAddSem ? "" : ";");
-                }else{
+                } else {
                     return "";
                 }
             })
@@ -192,13 +192,13 @@
                 }
             });
 
-        if(options.format){
-            data = data.replace(/{[^{}]*?}/g,function(all){
+        if (options.format) {
+            data = data.replace(/{[^{}]*?}/g, function (all) {
                 //format for {content} formation
                 return regexpTool.formatBlock(all);
-            }).replace(/{(.*?{(.|\n)*?}\n+)}/g,function(all, content){
+            }).replace(/{(.*?{(.|\n)*?}\n+)}/g, function (all, content) {
                 //format for {{content}} formation
-                return  "{\n\n\t" + content.replace(/(\n(?=[^$]))/g,"$1\t") + "}\n\n";
+                return "{\n\n\t" + content.replace(/(\n(?=[^$]))/g, "$1\t") + "}\n\n";
             })
 
         }
@@ -239,14 +239,14 @@
         }
     }
 
-    function getCurrentScript(){
-        return document.currentScript || (function(){
-            var scripts = document.getElementsByName("script");
-            return scripts[scripts.length - 1];
-        })();
+    function getCurrentScript() {
+        return document.currentScript || (function () {
+                var scripts = document.getElementsByName("script");
+                return scripts[scripts.length - 1];
+            })();
     }
 
-    function init(){
+    function init() {
         var script = getCurrentScript();
 
         options.format = script.getAttribute("format")
