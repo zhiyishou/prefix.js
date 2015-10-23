@@ -9,6 +9,6 @@ body {
 
 a {
     adffa:11;
-    color: red;
-    background:red
+    -ms-color: red;
+    -moz-background:red
 }
