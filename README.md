@@ -3,8 +3,6 @@ Auto add prefix for css attribute if the gaven prototype is not supported.
 
 > Write less, Fit more
 
-----
-
 This plugin is a CSS pre-processor, it works for the compatibility among so many different browser engines. prefix.js will auto amend gaven prototype and attribute for current engines.
  
 ###Example
