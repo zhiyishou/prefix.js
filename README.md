@@ -3,7 +3,7 @@ Auto add prefix for css attribute if the gaven prototype is not supported.
 
 > Write less, Fit more
 
-This plugin is a CSS pre-processor, it works for the compatibility among so many different browser engines. prefix.js will auto amend gaven prototype and attribute for current engines.
+This plugin is a CSS pre-processor, it works for the compatibility among so many different browser engines. **prefix.js** will auto amend gaven prototype and attribute for current engines.
  
 ###Example
 
@@ -87,7 +87,7 @@ In this code , `max-width` maybe need to be `-webkit-max-width` etc.
 }
 ```
 
-See? **prefix** is amazing!
+See? **prefix.js** is amazing!
 
 ##Usage
 
@@ -97,6 +97,6 @@ See? **prefix** is amazing!
 
 Add attribute `format="format"` on script so you can get a formatted style code.
 
-Or you can use **prefix** with `require`, you can call `require("prefix.js").init(format)` while the page is initializing.
+Or you can use **prefix.js** with `require`, you can call `require("prefix.js").init(format)` while the page is initializing.
 
 
