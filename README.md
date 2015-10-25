@@ -15,9 +15,11 @@ div{
 }
 ```
 
-If we run this code in Safari , and `transform` or `scale` is not supported in some older versions, **prefix.js** will trying to test whether if `-webkit-transform` is supported and using it when it is.
+If we run this code in Safari , and `transform` is not supported in some older versions, **prefix.js** will trying to test whether if `-webkit-transform` is supported and using it when it is.
 
 ##2.Media and Keyframes supported
+
+###Media
 
 ```css
 @media screen and (max-width: 900px){
@@ -26,6 +28,8 @@ If we run this code in Safari , and `transform` or `scale` is not supported in s
 ```
 
 In this code , `max-width` maybe need to be `-webkit-max-width` etc.
+
+###Keyframes
 
 ```css
 @keyframes cartoon{
@@ -83,7 +87,7 @@ In this code , `max-width` maybe need to be `-webkit-max-width` etc.
 }
 ```
 
-See? this is amazing!
+See? **prefix** is amazing!
 
 ##Usage
 
@@ -93,6 +97,6 @@ See? this is amazing!
 
 Add attribute `format="format"` on script so you can get a formatted style code.
 
-Or you can use this with `require`, you can call `require("prefix.js").init(format)` while the page is initializing.
+Or you can use **prefix** with `require`, you can call `require("prefix.js").init(format)` while the page is initializing.
 
 
