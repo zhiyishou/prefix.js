@@ -5,7 +5,7 @@
     if (typeof define === "function") {
         define("prefix", factory);
     } else {
-        factory();
+        factory().init();
     }
 }(function () {
     var toolDiv = document.createElement("div"),
@@ -246,15 +246,21 @@
             })();
     }
 
-    function init() {
-        var script = getCurrentScript();
-
-        options.format = script.getAttribute("format")
+    function start(){
+        getPrefixPair(function (pair) {
+            replaceLinks(pair);
+        });
     }
 
-    init();
-    getPrefixPair(function (pair) {
-        replaceLinks(pair);
-    });
+    function init(format) {
+        var script = getCurrentScript();
 
+        options.format = typeof format === "undefined" ? script.getAttribute("format") : format;
+
+        start();
+    }
+
+    return {
+        init : init
+    }
 });
