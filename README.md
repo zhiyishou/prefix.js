@@ -94,9 +94,11 @@ See? **prefix.js** is amazing!
 ##Usage
 
 ```html
+<link href="./xxx.css" rel="stylesheet/prefix">
 <script src="prefix.js"></script>
 ```
 
+Change rel to `rel="stylesheet/prefix"` to make sure prefix could detect them.
 Add attribute `format="format"` on script so you can get a formatted style code.
 
 Or you can use **prefix.js** with `require`, you can call `require("prefix.js").init(format)` while the page is initializing.
